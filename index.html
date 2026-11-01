@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F3ED">
+<title>すうじのぼうけん</title>
+<style>
+:root{
+ --bg:#F5F3ED; --surface:#FFFEFA; --ink:#243A35; --muted:#596B65;
+ --line:#D8DED5; --sage:#9DB7A5; --sage-deep:#416B5B; --blue:#A9C5D2;
+ --blue-deep:#355D6B; --ochre:#D6B36A; --rose:#D7A9A1; --cream:#E9E2D3;
+ --focus:#244E44;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif}
+body{overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.app{width:min(100%,1000px);min-height:100dvh;margin:auto;padding: max(16px, env(safe-area-inset-top)) clamp(16px,3vw,32px) max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:4px 0 14px}
+.brand{font-weight:850;font-size:clamp(21px,3.5vw,30px);letter-spacing:.04em;line-height:1.25}
+.sub{font-size:13px;color:var(--muted);margin-top:5px;letter-spacing:.04em}
+.pill{border:1px solid var(--line);border-radius:999px;padding:9px 13px;background:var(--surface);font-weight:800;white-space:nowrap;font-size:15px}
+main{flex:1;display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(18px,4vw,34px);box-shadow:0 3px 0 rgba(36,58,53,.05)}
+.center{text-align:center}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.25;margin:10px 0 12px;letter-spacing:.02em}
+h2{font-size:clamp(22px,3.5vw,30px);margin:0 0 8px}
+p{line-height:1.7;margin:7px 0;color:var(--muted)}
+.hero-icon{font-size:52px;line-height:1.3;filter:saturate(.7)}
+.levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+.level{border:1.5px solid var(--line);border-radius:18px;background:#fff;padding:17px 14px;text-align:left;min-height:106px;transition:background .15s,border-color .15s}
+.level:nth-child(1){border-top:5px solid var(--sage)}
+.level:nth-child(2){border-top:5px solid var(--blue)}
+.level:nth-child(3){border-top:5px solid var(--ochre)}
+.level:nth-child(4){border-top:5px solid var(--rose)}
+.level strong{display:block;font-size:clamp(17px,2.5vw,20px);margin-bottom:7px;font-weight:800}
+.level span{font-size:14px;line-height:1.5;color:var(--muted)}
+.primary,.secondary{border:0;border-radius:15px;padding:15px 20px;font-weight:850;font-size:18px;min-height:56px}
+.primary{background:var(--sage-deep);color:#fff;box-shadow:0 3px 0 #2E5245}
+.secondary{background:#E8ECE5;color:var(--ink);border:1px solid #D5DDD3}
+.primary:active,.secondary:active,.level:active,.answer:active{transform:translateY(1px)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.progress{height:8px;border-radius:99px;background:#E6E9E2;overflow:hidden;margin:10px 0 5px}
+.progress>div{height:100%;width:0;background:var(--sage-deep);transition:width .2s}
+.question{font-size:clamp(34px,7vw,58px);font-weight:850;text-align:center;margin:12px 0;color:var(--ink);line-height:1.25}
+.instruction{text-align:center;font-weight:700;color:var(--muted);font-size:clamp(15px,2vw,18px);line-height:1.5}
+.abacus-wrap{background:#F0F1E9;border:1.5px solid #DDE2D7;border-radius:20px;padding:16px 12px;margin:14px 0}
+.abacus-label{text-align:center;color:var(--muted);font-size:14px;margin-bottom:8px;font-weight:650}
+.rods{display:flex;justify-content:center;gap:clamp(8px,2.5vw,22px);min-height:150px}
+.rod{width:clamp(44px,9vw,68px);border:0;background:transparent;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 0 8px;min-height:145px;border-radius:12px}
+.rod:before{content:"";position:absolute;bottom:12px;top:5px;width:6px;border-radius:8px;background:#B8A78C;z-index:0}
+.bead{width:clamp(35px,7.5vw,53px);height:27px;border-radius:999px;border:2px solid rgba(36,58,53,.12);margin-top:5px;z-index:1;box-shadow:inset 0 -2px rgba(36,58,53,.08);transition:transform .16s,opacity .16s}
+.bead.on{transform:translateY(-3px);border-color:rgba(36,58,53,.18)}
+.bead.off{opacity:.5}
+.count-readout{font-size:19px;text-align:center;font-weight:850;margin-top:8px;color:var(--ink)}
+.answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.answer{border:1.5px solid var(--line);background:#fff;border-radius:15px;min-height:66px;font-size:clamp(25px,4vw,32px);font-weight:850}
+.answer.selected{background:#DCE8DE;border-color:var(--sage-deep);box-shadow:inset 0 0 0 1px var(--sage-deep)}
+.feedback{min-height:38px;text-align:center;font-weight:850;font-size:clamp(17px,2.5vw,21px);padding:5px 0;line-height:1.5}
+.feedback.good{color:#315F4E}.feedback.try{color:#82552D}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.small{font-size:13px;color:var(--muted);line-height:1.6}
+.hidden{display:none!important}
+footer{text-align:center;font-size:12px;color:#6B7971;padding:4px}
+@media(min-width:680px){.levels{grid-template-columns:repeat(4,minmax(0,1fr))}.lesson-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center}.abacus-wrap{margin:0}.rods{min-height:180px}.rod{min-height:170px}}
+@media(max-width:390px){.panel{border-radius:20px}.pill{font-size:14px;padding:8px 11px}.levels{gap:9px}.level{padding:14px 11px;min-height:102px}}
+@media(orientation:landscape) and (max-height:600px){.app{gap:10px;padding-top:10px}.panel{padding:15px 20px}.hero-icon{font-size:32px}h1{font-size:28px;margin:4px}.sub{display:none}.lesson-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.rods{min-height:105px}.rod{min-height:100px}.bead{height:21px;margin-top:3px}.abacus-wrap{margin:8px 0;padding:8px}.question{margin:5px}.levels{margin-top:14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div><div class="brand">すうじのぼうけん</div><div class="sub">さわって、かんがえて、できた。</div></div>
+  <div class="pill">★ <span id="totalStars">0</span></div>
+</header>
+<main>
+<section id="home" class="panel center">
+  <div class="hero-icon">🌿</div>
+  <h1>きょうは なにに ちょうせんする？</h1>
+  <p>たまを うごかして、すうじと なかよくなろう。</p>
+  <div class="levels">
+    <button class="level" data-level="1"><strong>01　かずをつくる</strong><span>1〜3までの数を知ろう</span></button>
+    <button class="level" data-level="2"><strong>02　もっとかずを</strong><span>1〜5までの数を知ろう</span></button>
+    <button class="level" data-level="3"><strong>03　たしざん</strong><span>5までの足し算に挑戦</span></button>
+    <button class="level" data-level="4"><strong>04　あたまで計算</strong><span>10までの足し算に挑戦</span></button>
+  </div>
+  <p class="small" style="margin-top:18px">はじめてなら「01 かずをつくる」から</p>
+</section>
+<section id="game" class="panel hidden">
+  <div class="row"><button id="homeBtn" class="secondary" style="padding:9px 13px;min-height:44px;font-size:15px">← もどる</button><div class="pill" id="levelLabel">01　かずをつくる</div><div class="pill">★ <span id="roundStars">0</span></div></div>
+  <div class="progress"><div id="progressBar"></div></div>
+  <div class="row small"><span id="questionCount">もんだい 1 / 5</span><span>じぶんのペースで だいじょうぶ</span></div>
+  <div class="question" id="question">いくつかな？</div>
+  <div class="instruction" id="instruction">たまをタップして、かずをつくろう</div>
+  <div class="lesson-layout" style="margin-top:14px">
+    <div class="abacus-wrap">
+      <div class="abacus-label" id="abacusLabel">たまを タップしてね</div>
+      <div class="rods" id="rods" aria-label="たまを操作するエリア"></div>
+      <div class="count-readout">いまのかず：<span id="currentCount">0</span></div>
+    </div>
+    <div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <button class="primary" id="checkBtn" style="width:100%">こたえあわせ</button>
+      <button class="secondary hidden" id="nextBtn" style="width:100%;margin-top:12px">つぎへ　→</button>
+      <div class="center small" style="margin-top:12px" id="hint">たまを かぞえてみよう</div>
+    </div>
+  </div>
+</section>
+<section id="result" class="panel center hidden">
+  <div class="hero-icon">🌱</div>
+  <h1>きょうの ぼうけん クリア</h1>
+  <p id="resultMessage">よくがんばったね。</p>
+  <h2>★ <span id="earnedStars">0</span> こ</h2>
+  <p>せいかい：<strong id="correctTotal">0</strong> / 5 もん</p>
+  <div class="actions" style="margin-top:18px"><button class="primary" id="againBtn">もういちど</button><button class="secondary" id="homeFromResult">ホームへ</button></div>
+</section>
+</main>
+<footer>たのしく、ゆっくり、ひとつずつ。</footer>
+</div>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const colors = ['#D7A9A1','#A9C5D2','#D6B36A','#9DB7A5','#B9B2D3','#D9B99B','#91BDB5','#CFA7B9','#B8C49A','#A7B8C9'];
+ const names = {1:'01　かずをつくる',2:'02　もっとかずを',3:'03　たしざん',4:'04　あたまで計算'};
+ let level=1, qIndex=0, correct=0, earned=0, totalStars=Number(localStorage.getItem('suujiStarsNordic')||0);
+ let target=1, a=0,b=0, count=0, answered=false, roundMode='count', selectedAnswer=null;
+ $('totalStars').textContent=totalStars;
+ function speak(text){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=.84;speechSynthesis.speak(u)}catch(e){}}
+ function show(id){['home','game','result'].forEach(s=>$(s).classList.toggle('hidden',s!==id))}
+ function rand(n){return Math.floor(Math.random()*n)+1}
+ function start(l){level=l;qIndex=0;correct=0;earned=0;$('roundStars').textContent='0';$('levelLabel').textContent=names[level];show('game');newQuestion()}
+ function newQuestion(){
+  answered=false;count=0;selectedAnswer=null;
+  $('feedback').textContent='';$('feedback').className='feedback';$('checkBtn').classList.remove('hidden');$('nextBtn').classList.add('hidden');
+  $('progressBar').style.width=(qIndex/5*100)+'%';$('questionCount').textContent=`もんだい ${qIndex+1} / 5`;
+  if(level<=2){roundMode='count';target=rand(level===1?3:5);$('question').textContent=level===1?`${target} こ つくろう`:`${target} こ つくろう`;$('instruction').textContent='たまを タップして、かずを つくろう';$('abacusLabel').textContent='たまを タップすると うごくよ';$('hint').textContent='できたら「こたえあわせ」を おしてね'}
+  else{roundMode='add';const max=level===3?5:10;a=rand(level===3?3:5);b=rand(level===3?2:5);while(a+b>max){a=rand(level===3?3:5);b=rand(level===3?2:5)}target=a+b;$('question').textContent=`${a} ＋ ${b} ＝ ？`;$('instruction').textContent=level===4?'あたまのなかでも かんがえてみよう':'たまを うごかして、こたえを つくろう';$('abacusLabel').textContent=`${a} こに、${b} こ たそう`;$('hint').textContent='たまを かぞえても、あたまで かんがえても OK'}
+  renderRods();renderAnswers();speak(roundMode==='count'?`${target}こ つくろう`:`${a} たす ${b} は いくつかな`)
+ }
+ function renderRods(){
+  const max=level===1?3:level===2?5:10;$('rods').innerHTML='';
+  for(let i=0;i<max;i++){const rod=document.createElement('button');rod.className='rod';rod.setAttribute('aria-label',`${i+1}こめの たま`);
+   rod.innerHTML=`<span class="bead ${i<count?'on':'off'}" style="background:${colors[i%colors.length]}"></span>`;
+   rod.addEventListener('click',()=>{if(answered)return;count=(i+1===count)?i:i+1;renderRods();$('currentCount').textContent=count;highlightAnswer(null)});$('rods').appendChild(rod)}
+  $('currentCount').textContent=count
+ }
+ function renderAnswers(){
+  const max=level===1?3:level===2?5:10;let vals=new Set([target,Math.max(0,target-1),Math.min(max,target+1)]);
+  while(vals.size<Math.min(3,max+1))vals.add(Math.floor(Math.random()*(max+1)));
+  let arr=[...vals].filter(v=>v>=0&&v<=max);arr.sort(()=>Math.random()-.5);$('answers').innerHTML='';
+  arr.forEach(n=>{const btn=document.createElement('button');btn.className='answer';btn.textContent=n;btn.addEventListener('click',()=>{if(answered)return;selectedAnswer=n;count=n;$('currentCount').textContent=count;renderRods();highlightAnswer(n)});$('answers').appendChild(btn)})
+ }
+ function highlightAnswer(n){document.querySelectorAll('.answer').forEach(btn=>btn.classList.toggle('selected',n!==null&&Number(btn.textContent)===n))}
+ function check(){
+  if(answered)return;
+  const response=roundMode==='count'?count:selectedAnswer;
+  if(response!==target){$('feedback').textContent=roundMode==='count'?'たまを もういちど かぞえてみよう':'もういちど ゆっくり かんがえよう';$('feedback').className='feedback try';speak('もういちど かんがえてみよう');return}
+  answered=true;correct++;earned++;totalStars++;localStorage.setItem('suujiStarsNordic',String(totalStars));$('totalStars').textContent=totalStars;$('roundStars').textContent=earned;
+  $('feedback').textContent=['せいかい。すごいね。','やったね。','できたね。'][rand(3)-1];$('feedback').className='feedback good';$('checkBtn').classList.add('hidden');$('nextBtn').classList.remove('hidden');$('progressBar').style.width=((qIndex+1)/5*100)+'%';speak('せいかい。すごいね。')
+ }
+ function next(){if(!answered)return;qIndex++;if(qIndex>=5){$('earnedStars').textContent=earned;$('correctTotal').textContent=correct;$('resultMessage').textContent=correct===5?'ぜんぶ せいかい。すばらしい。':'さいごまで がんばったね。';show('result');speak('ぼうけんクリア。よくがんばったね')}else newQuestion()}
+ document.querySelectorAll('[data-level]').forEach(btn=>btn.addEventListener('click',()=>start(Number(btn.dataset.level))));
+ $('checkBtn').addEventListener('click',check);$('nextBtn').addEventListener('click',next);$('homeBtn').addEventListener('click',()=>show('home'));$('homeFromResult').addEventListener('click',()=>show('home'));$('againBtn').addEventListener('click',()=>start(level));
+})();
+</script>
+</body>
+</html>
